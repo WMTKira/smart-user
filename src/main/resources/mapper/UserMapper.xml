@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.wmt.smartuser.mapper.UserMapper">
+
+    <insert id="saveUser">
+        INSERT INTO user_info (user_name,
+                                password,
+                                email)
+        VALUES (#{userName},
+                #{password},
+                #{email})
+    </insert>
+
+    <select id="getUser" resultType="com.wmt.smartuser.model.User">
+        SELECT *
+        FROM user_info
+        WHERE user_name = #{userName}
+        LIMIT 1
+    </select>
+</mapper>
