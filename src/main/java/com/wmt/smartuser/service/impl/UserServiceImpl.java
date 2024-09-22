@@ -5,6 +5,7 @@ import com.wmt.smartuser.mapper.UserMapper;
 import com.wmt.smartuser.model.User;
 import com.wmt.smartuser.model.UserContext;
 import com.wmt.smartuser.service.UserService;
+import com.wmt.smartuser.util.AssertUtil;
 import com.wmt.smartuser.util.JwtUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+import sun.net.www.http.HttpClient;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 
 /**
@@ -43,12 +48,15 @@ public class UserServiceImpl implements UserDetailsService, UserService {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Resource
+    private HttpServletRequest httpServletRequest;
+
     @Override
     public UserDetails loadUserByUsername(String username) {
         User credential = usermapper.getUser(username);
         if (ObjectUtils.isEmpty(credential)) {
             log.info("User empty ");
-            throw new UsernameNotFoundException("User not exist :" + username);
+            throw new IllegalArgumentException("Username does not exist!");
         }
         return new UserContext(credential);
     }
@@ -59,12 +67,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         retUser.setId(1025115877752L);
         retUser.setUserName(userDto.getUserName());
         retUser.setEmail(userDto.getUserName() + "@wwcloud.com");
-
-        Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getUserName(), userDto.getPassword()));
-        if (authenticate.isAuthenticated()) {
-            retUser.setToken(jwtUtil.generateToken(userDto.getUserName()));
-        } else {
-            throw new BadCredentialsException("invalid access");
+        log.info("authenticate");
+        try {
+            Authentication authenticate = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userDto.getUserName(), userDto.getPassword()));
+            if (authenticate.isAuthenticated()) {
+                retUser.setToken(jwtUtil.generateToken(userDto.getUserName()));
+            }
+            log.info("authenticate");
+        }catch (Exception e) {
+            log.error(String.valueOf(e));
+            throw new IllegalArgumentException(e instanceof BadCredentialsException ? "Password is incorrect!" : e.getMessage());
         }
         return retUser;
     }
@@ -76,5 +88,17 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         user.setEmail(userDto.getUserName() + "@wwcloud.com");
         user.setPassword(passwordEncoder.encode(userDto.getPassword()));
         return usermapper.saveUser(user);
+    }
+
+    @Override
+    public User getInfo() {
+        String name = httpServletRequest.getHeader("NAME");
+        AssertUtil.isFalse("".equals(name), "User not found, please login again!");
+        return usermapper.getUser(name);
+    }
+
+    @Override
+    public List<User> getUserList() {
+        return usermapper.getUserList();
     }
 }

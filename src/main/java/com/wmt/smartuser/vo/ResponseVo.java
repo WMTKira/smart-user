@@ -25,27 +25,27 @@ public abstract class ResponseVo {
     }
 
     private static ResponseEntity<Object> buildSuccessResponseEntity(Object responseData) {
-        return getObjectResponseEntity("Operation Succeed", HttpStatus.OK, responseData);
+        return getObjectResponseEntity("Operation Succeed", 0, responseData);
     }
 
     public static ResponseEntity<Object> fail() {
-        return getObjectResponseEntity("Operation failed", HttpStatus.BAD_REQUEST, null);
+        return getObjectResponseEntity("Operation failed", 10001, null);
     }
 
     public static ResponseEntity<Object> fail(Map<String, String> errorMap) {
-        return getObjectResponseEntity(errorMap.toString(), HttpStatus.BAD_REQUEST, null);
+        return getObjectResponseEntity(errorMap.toString(), 10001, null);
     }
 
     public static ResponseEntity<Object> fail(String errorMessage) {
-        return getObjectResponseEntity(errorMessage, HttpStatus.BAD_REQUEST, null);
+        return getObjectResponseEntity(errorMessage, 10001, null);
     }
 
-    private static ResponseEntity<Object> getObjectResponseEntity(String message, HttpStatus status, Object responseData) {
+    private static ResponseEntity<Object> getObjectResponseEntity(String message, Integer code, Object responseData) {
         Map<String, Object> map = new HashMap<>(4);
         map.put("message", message);
-        map.put("status", status.value());
+        map.put("code", code);
         map.put("data", responseData);
-        return new ResponseEntity<>(map, status);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
 }

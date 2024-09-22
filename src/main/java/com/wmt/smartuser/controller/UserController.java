@@ -3,10 +3,10 @@ package com.wmt.smartuser.controller;
 import com.wmt.smartuser.dto.UserDto;
 import com.wmt.smartuser.model.User;
 import com.wmt.smartuser.service.UserService;
+import com.wmt.smartuser.util.AssertUtil;
 import com.wmt.smartuser.vo.ResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +19,6 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping(value = "/smart/user")
-@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
     @Autowired
@@ -27,6 +26,7 @@ public class UserController {
 
     @PostMapping("/v1/register")
     public ResponseEntity<Object> register(@RequestBody UserDto userDto) {
+        AssertUtil.isTrue(false,"dwdwdwdw");
         int succeed = userService.register(userDto);
         return succeed > 0 ? ResponseVo.success() : ResponseVo.fail();
     }
@@ -37,15 +37,14 @@ public class UserController {
         return ResponseVo.success(user1);
     }
 
+    @GetMapping("/v1/getInfo")
+    public ResponseEntity<Object> getInfo() {
+        return ResponseVo.success(userService.getInfo());
+    }
+
     @GetMapping("/v1/getUserList")
-    public List<User> test() {
-        List<User> users = new ArrayList<>();
-        User user1 = new User();
-        user1.setId(1025115877752L);
-        user1.setUserName("admin");
-        user1.setEmail("admin@wwcloud.com");
-        users.add(user1);
-        return users;
+    public ResponseEntity<Object> test() {
+        return ResponseVo.success(userService.getUserList());
     }
 
 }

@@ -3,8 +3,6 @@ package com.wmt.smartuser.exception;
 import com.wmt.smartuser.vo.ResponseVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -34,15 +32,4 @@ public class GlobalExceptionHandler {
         return ResponseVo.fail(exception.getMessage());
     }
 
-    @ExceptionHandler(UsernameNotFoundException.class)
-    public ResponseEntity<Object> handleValidationException(UsernameNotFoundException exception) {
-        log.info("UsernameNotFoundException: {}",exception.getMessage());
-        return ResponseVo.fail(exception.getMessage());
-    }
-
-    @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<Object> handleValidationException(BadCredentialsException exception) {
-        log.info("BadCredentialsException: {}",exception.getMessage());
-        return ResponseVo.fail(exception.getMessage());
-    }
 }

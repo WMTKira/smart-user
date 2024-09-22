@@ -13,9 +13,21 @@
     </insert>
 
     <select id="getUser" resultType="com.wmt.smartuser.model.User">
-        SELECT *
+        SELECT id,
+               user_name userName,
+               email,
+               password
         FROM user_info
         WHERE user_name = #{userName}
         LIMIT 1
+    </select>
+    <select id="getUserList" resultType="com.wmt.smartuser.model.User">
+        SELECT  id,
+                user_name userName,
+                email,
+                password
+
+        FROM user_info
+
     </select>
 </mapper>
